@@ -1,0 +1,7 @@
+# environment vars
+*.env
+.env
+
+frontend2.0/
+
+backend/data/
