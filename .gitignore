@@ -2,6 +2,6 @@
 *.env
 .env
 
-frontend2.0/
 
-backend/data/
+# archive
+.arxiv/

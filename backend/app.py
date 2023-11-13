@@ -1,22 +1,24 @@
-import io
-import time
-from typing import Optional
-from fastapi import FastAPI, UploadFile
+from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from openai import OpenAI
-import dotenv
+from typing import Optional, Dict
+import os
+import yaml
+from backend.modules.openai_config import get_openai_client
+import time
+import json
 
-# Load environment variables
-dotenv.load_dotenv()
+agent_config_path = r'backend/agents/ari.yaml'
+with open(agent_config_path, 'r') as file:
+    agent_config = yaml.safe_load(file)
 
-# Initialize OpenAI API client
-client = OpenAI()
-
+    # Extract and log configuration details
+    assistant_id = agent_config.get('ID')
+    
 # Initialize FastAPI app
 app = FastAPI()
 
-# Add CORS middleware
+# CORS Middleware Setup
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Allows all origins
@@ -25,82 +27,48 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-# Pydantic model for message
-class Message(BaseModel):
-    content: Optional[str] = None
+# Pydantic models for request and response
+class ChatRequest(BaseModel):
+    user_message: str
 
-# Function to get the last message from a thread
-def get_last_message(thread_id):
-    messages_response = client.beta.threads.messages.list(thread_id=thread_id)
-    messages = messages_response.data
-  
-    for message in reversed(messages):
-        if message.role == 'assistant':
-            return " ".join(
-                content.text.value for content in message.content if hasattr(content, 'text')
-            ).strip()
-  
-    return ""  # Return an empty string if there is no assistant message
+class ChatResponse(BaseModel):
+    bot_response: str
 
-# Endpoint for conversation with the assistant
-@app.post("/converse")
-async def converse(message: Message, file: Optional[UploadFile] = None):
-    # Instructions and tools for 'Ari' assistant
-    instructions = """
-    You are Ari, an AI talent management agent modeled after the great Ari Gold.
-    You are friendly, helpful, witty, funny, and a bit snarky. You're always looking for the next big thing.
-    You help human talent agents manage dealflow for their creators.
-    In the code interpreter, you have access to a database file of creators and their information.
-    You can use this file to make recommendations about creators in response to user queries.
-    You also have access to a web search function that you can use to research information about creators, brands, and current events.
-    User queries may request responses to RFPs, help with generating copy, or help researching brands.
-    """
-    toolkit = [{"type": "code_interpreter"}]
+# Global variables to hold client, assistant, and thread information
+client = get_openai_client()
+assistant = client.beta.assistants.retrieve(assistant_id=assistant_id)  # Replace with your assistant ID
+thread = client.beta.threads.create()
 
-    file_id = None
-    if file:
-        # Read the file asynchronously
-        contents = await file.read()
-        # Upload the file to OpenAI
-        uploaded_file = client.files.create(
-            file=io.BytesIO(contents),
-            purpose='assistants'
-        )
-        file_id = uploaded_file.id
-
-    # Initialize 'Ari' assistant with or without the uploaded file
-    assistant_params = {
-        'name': "Ari",
-        'instructions': instructions,
-        'tools': toolkit,
-        'model': "gpt-4-1106-preview",
-        'file_ids': [file_id] if file_id else []
-    }
-    assistant = client.beta.assistants.create(**assistant_params)
-    assistant_thread = client.beta.threads.create()
-
-    # Create a user message
-    client.beta.threads.messages.create(
-        thread_id=assistant_thread.id,
+# Function to handle assistant interaction
+def handle_assistant_interaction(user_message: str, functions: Dict[str, callable]) -> str:
+    # Add user message to thread
+    thread_message = client.beta.threads.messages.create(
+        thread.id,
         role="user",
-        content=message.content
-    )
+        content=user_message,
+    ) 
 
-    # Create a run instance
-    run = client.beta.threads.runs.create(
-        thread_id=assistant_thread.id,
-        assistant_id=assistant.id,
-    )
+    # Other parts of your chat interaction logic...
 
-    # Wait for the run to complete
-    while True:
-        run_status = client.beta.threads.runs.retrieve(
-            thread_id=assistant_thread.id,
-            run_id=run.id,
-        )
-        if run_status.status == 'completed':
-            break
-        time.sleep(1)  # Avoid hitting the API too frequently
+    # Example return (replace with actual logic)
+    return "Response from assistant"
 
-    # Retrieve the last message from the assistant
-    return {get_last_message(assistant_thread.id)}
+@app.post("/chat", response_model=ChatResponse)
+async def chat_with_assistant(request: ChatRequest, background_tasks: BackgroundTasks) -> ChatResponse:
+    try:
+        # Extract user message from request
+        user_message = request.user_message
+
+        # Define functions dictionary (update as needed)
+        functions = {
+            'code_interpreter': lambda x: "dummy response"  # Placeholder function
+        }
+
+        # Handle the assistant interaction (use a background task if it's a long-running operation)
+        bot_response = handle_assistant_interaction(user_message, functions)
+
+        return ChatResponse(bot_response=bot_response)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Run the server with: python -m uvicorn backend.app:app --reload
