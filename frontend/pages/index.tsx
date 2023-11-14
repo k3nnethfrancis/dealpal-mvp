@@ -21,20 +21,18 @@ export default function Home() {
   };
 
   const handleSend = async (message: Message) => {
+    console.log("Sending message:", message);
     const updatedMessages = [...messages, message];
   
     setMessages(updatedMessages);
     setLoading(true);
   
-    const formData = new FormData();
-    formData.append('message', JSON.stringify(message));
-    if (file) {
-      formData.append('file', file);
-    }
-
     const response = await fetch("http://localhost:8000/chat", {
       method: "POST",
-      body: formData
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ user_message: message.content })  // Send a JSON object
     });
   
     if (!response.ok) {
@@ -54,7 +52,7 @@ export default function Home() {
       ...messages,
       {
         role: "assistant",
-        content: data.assistant_message
+        content: data.bot_response  // Use the correct field name
       }
     ]);
   };

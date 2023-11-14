@@ -1,7 +1,8 @@
 import time
 import json
+from backend.base import show_json
 
-def chat(client, thread, assistant, functions):
+def chat(client, thread, assistant, functions, debug=False):
     while True:
         user_message = input("You: ")
 
@@ -70,7 +71,10 @@ def chat(client, thread, assistant, functions):
         assistant_response = thread_messages.data[0].content[0].text.value
 
         print(f"\n\nBot: {assistant_response}\n\n", flush=True)
-
+        
+        if debug:
+            print(f'printing thread:\n\n{show_json(thread_messages)}\n---\n')
+        
         # continue?
         try:
             input("Press enter to continue chatting, or ctrl+c to stop chat\n")

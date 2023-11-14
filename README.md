@@ -22,7 +22,7 @@
 
 
 # To Do
-- Fix the error with the frontend
+- ~~Fix the error with the frontend~~
 - Add file uploads to the frontend
 - Add file upload for assistant to backend
 - Add web search tool using APIFY scraper APIs
