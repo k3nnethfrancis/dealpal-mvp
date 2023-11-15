@@ -16,8 +16,23 @@ export default function Home() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const handleFileChange = (selectedFile: File) => {
+  const handleFileChange = async (selectedFile: File) => {
     setFile(selectedFile);
+  
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+  
+    const response = await fetch("http://localhost:8000/upload", {
+      method: "POST",
+      body: formData,
+    });
+  
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+  
+    const data = await response.json();
+    console.log(data);
   };
 
   const handleSend = async (message: Message) => {
@@ -66,6 +81,7 @@ export default function Home() {
     ]);
   };
 
+
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
@@ -74,8 +90,8 @@ export default function Home() {
     setMessages([
       {
         role: "assistant",
-        content: `Yoyo! I'm Ari, your talent agent AI assistant. I can help you with things generating persuasive copy, and answering questions about creators you've uploaded. How can I help you?`
-      }
+        content: `Yoyo! I'm Ari, your talent agent AI assistant. I can help you with things generating persuasive copy, and answering questions about creators you've uploaded. How can I help you?`,
+      },
     ]);
   }, []);
 
@@ -87,14 +103,8 @@ export default function Home() {
           name="description"
           content="A simple chatbot starter kit for OpenAI's chat model using Next.js, TypeScript, and Tailwind CSS."
         />
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1"
-        />
-        <link
-          rel="icon"
-          href="/favicon.ico"
-        />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <div className="flex flex-col h-screen">
@@ -102,7 +112,13 @@ export default function Home() {
 
         <div className="flex-1 overflow-auto sm:px-10 pb-4 sm:pb-10">
           <div className="max-w-[800px] mx-auto mt-4 sm:mt-12">
-          <input type="file" onChange={(e) => e.target.files && handleFileChange(e.target.files[0])} />            <Chat
+            <input
+              type="file"
+              onChange={(e) =>
+                e.target.files && handleFileChange(e.target.files[0])
+              }
+            />
+            <Chat
               messages={messages}
               loading={loading}
               onSend={handleSend}

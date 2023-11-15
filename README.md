@@ -23,8 +23,8 @@
 
 # To Do
 - ~~Fix the error with the frontend~~
-- Add file uploads to the frontend
-- Add file upload for assistant to backend
+- ~~Add file uploads to the frontend~~
+- ~~Add file upload for assistant to backend~~
 - Add web search tool using APIFY scraper APIs
 - Add a way to save the chat history / outputs from the log e.g., click specific message and 'save to drafts'
 - add filtering buttons to the frontend

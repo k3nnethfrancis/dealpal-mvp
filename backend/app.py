@@ -1,14 +1,14 @@
-import asyncio
-from fastapi import FastAPI, HTTPException, BackgroundTasks
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import Optional, Dict
 import os
 import yaml
-from backend.modules.openai_config import get_async_openai_client  # Import the get_openai_client function
 import time
 import json
+import asyncio
 import logging
+from pydantic import BaseModel
+from typing import Optional, Dict
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, HTTPException, BackgroundTasks, UploadFile, File
+from backend.modules.openai_config import get_async_openai_client  # Import the get_openai_client function
 
 logging.basicConfig(level=logging.INFO)
 
@@ -107,5 +107,27 @@ async def chat_with_assistant(request: ChatRequest, background_tasks: Background
     except Exception as e:
         logging.error(f"An error occurred: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+    
+
+@app.post("/upload")
+async def upload_file(file: UploadFile = File(...)):
+    # Read the file
+    contents = await file.read()
+
+    # Upload the file to OpenAI
+    uploaded_file = await client.files.create(
+        file=contents,
+        purpose="assistants",
+    )
+    logging.info(f"Uploaded file: {uploaded_file.filename}")
+    logging.info(f"Updating assistant: {assistant.id}")
+    # Update the assistant
+    assistant = await client.beta.assistants.update(
+        assistant_id=assistant_id,
+        tools=[{"type": "code_interpreter"}],
+        file_ids=[uploaded_file.id],
+    )
+
+    return {"filename": file.filename}
 
 # Run the server with: python -m uvicorn backend.app:app --reload
