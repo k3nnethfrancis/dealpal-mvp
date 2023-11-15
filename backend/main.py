@@ -19,7 +19,7 @@ file = client.files.create(
 # Update the assistant
 assistant = client.beta.assistants.update(
     assistant_id=assistant.id,
-    tools=[{"type": "code_interpreter"}],
+    # tools=[{"type": "code_interpreter"}],
     file_ids=[file.id],
 )
 
@@ -27,9 +27,9 @@ chat(
     client=client,
     assistant=assistant,
     thread=thread,
-    functions='code_interpreter',
+    tools=['code_interpreter', 'search_tool'],
     debug=False # Set to True to print message threads for each message
-    )
+)
 
 print('Chat session ended. Printing thread messages...')
 show_json(thread)

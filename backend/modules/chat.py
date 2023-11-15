@@ -1,8 +1,21 @@
+# backend/modules/chat.py
+
 import time
 import json
 from backend.base import show_json
+from backend.modules.toolkit import sub_agent_search_tool, tool_functions, tool_jsons
 
-def chat(client, thread, assistant, functions, debug=False):
+def chat(client, thread, assistant, tools=None, debug=False):
+    # If tools is None, initialize it as an empty list
+    if tools is None:
+        tools = []
+
+    # Create a list of tool JSONs to use in the chat
+    tool_jsons_to_use = [{"type": tool} if tool not in tool_functions else {"type": "function", "function": tool_jsons.get(tool, None)} for tool in tools]
+
+    # Create a dictionary of functions to use in the chat
+    functions = {tool: tool_functions[tool] for tool in tools if tool in tool_functions}
+
     while True:
         user_message = input("You: ")
 
@@ -17,7 +30,9 @@ def chat(client, thread, assistant, functions, debug=False):
         run = client.beta.threads.runs.create(
           thread_id=thread.id,
           assistant_id=assistant.id,
+          tools=tool_jsons_to_use,
         )
+
 
         # wait for run to complete
         wait_time = 0
