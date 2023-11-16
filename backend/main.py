@@ -9,7 +9,7 @@ assistant = client.beta.assistants.retrieve(assistant_id=ASSISTANT_ID)
 thread = client.beta.threads.create()
 
 # add files
-FILE = os.path.join(os.getcwd(), 'backend', 'data', 'alpha_creators.csv')
+FILE = os.path.join(os.getcwd(), 'data', 'alpha_creators.csv')
 # Upload the file
 file = client.files.create(
     file=open(FILE, "rb"),

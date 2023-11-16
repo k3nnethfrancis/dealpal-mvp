@@ -15,7 +15,7 @@
 * run chat.py with `python -m backend.chat`
 
 ## run the web app
-* run app.py with `python -m uvicorn backend.app:app -- reload`
+* run app.py with `python -m uvicorn backend.app:app --reload`
 
 ## run the frontend
 * run `cd frontend`

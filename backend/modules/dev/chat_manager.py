@@ -201,6 +201,7 @@ class ChatManager:
         functional_thread = self.client.beta.threads.retrieve(
             thread_id=functional_thread.id
         )
+        print("response")
         print(response)
         print()
         return interface_assistant, interface_thread, functional_thread

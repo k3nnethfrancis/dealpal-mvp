@@ -1,14 +1,13 @@
-import os
 import yaml
 import time
-import json
-import asyncio
 import logging
 from pydantic import BaseModel
-from typing import Optional, Dict
+from typing import Dict
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, HTTPException, BackgroundTasks, UploadFile, File
+
 from backend.modules.openai_config import get_async_openai_client  # Import the get_openai_client function
+from backend.scraper.scraper import run_selenium
 
 logging.basicConfig(level=logging.INFO)
 
@@ -84,6 +83,18 @@ async def handle_assistant_interaction(user_message: str, functions: Dict[str, c
     # Get assistant response from message
     assistant_response = thread_messages.data[0].content[0].text.value
 
+    # Check for each keyword in the 'functions' dictionary
+    print("here")
+    for keyword, function in functions.items():
+        if keyword.lower() in assistant_response.lower():
+            # If the keyword is found in the assistant's response,
+            # call the corresponding function
+            function_response = function()
+
+            # Append the function's response to the assistant's response
+            assistant_response += f"{function_response}"
+            print(assistant_response)
+
     return assistant_response
 
 @app.post("/chat", response_model=ChatResponse)
@@ -97,11 +108,12 @@ async def chat_with_assistant(request: ChatRequest, background_tasks: Background
 
         # Define functions dictionary (update as needed)
         functions = {
-            'code_interpreter': lambda x: "dummy response"  # Placeholder function
+            'finding_influencers': run_selenium
         }
 
         # Handle the assistant interaction (use a background task if it's a long-running operation)
         bot_response = await handle_assistant_interaction(user_message, functions)
+        print(bot_response)
 
         return ChatResponse(bot_response=bot_response)
     except Exception as e:
@@ -120,7 +132,7 @@ async def upload_file(file: UploadFile = File(...)):
         purpose="assistants",
     )
     logging.info(f"Uploaded file: {uploaded_file.filename}")
-    logging.info(f"Updating assistant: {assistant.id}")
+    #logging.info(f"Updating assistant: {assistant.id}")
     # Update the assistant
     assistant = await client.beta.assistants.update(
         assistant_id=assistant_id,
