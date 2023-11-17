@@ -38,15 +38,32 @@ thread = None
 @app.on_event("startup")
 async def startup_event():
     global assistant, thread
-    assistant = await client.beta.assistants.retrieve(assistant_id=assistant_id)  # Replace with your assistant ID
+    assistant = await client.beta.assistants.retrieve(
+        assistant_id=assistant_id
+        )  # Replace with your assistant ID
     thread = await client.beta.threads.create()
 
 @app.post("/chat", response_model=ChatResponse)
-async def chat_with_assistant(request: ChatRequest, background_tasks: BackgroundTasks) -> ChatResponse:
-    return await handle_chat_with_assistant(request, background_tasks, client, thread, assistant)
+async def chat_with_assistant(
+    request: ChatRequest, 
+    background_tasks: BackgroundTasks
+    ) -> ChatResponse:
+    return await handle_chat_with_assistant(
+        request, 
+        background_tasks, 
+        client, 
+        thread, 
+        assistant
+        )
 
 @app.post("/upload")
-async def upload_file(file: UploadFile = File(...)):
-    return await handle_upload_file(file, client, assistant_id)
+async def upload_file(
+    file: UploadFile = File(...)
+    ):
+    return await handle_upload_file(
+        file, 
+        client, 
+        assistant_id
+        )
 
 

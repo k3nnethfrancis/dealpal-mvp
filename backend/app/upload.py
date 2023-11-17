@@ -17,7 +17,8 @@ async def handle_upload_file(file, client, assistant_id):
         assistant_id=assistant_id,
         tools=[
             {"type": "code_interpreter"},
-            {"type": "function", "function": function_json},
+            {"type": "function", "function": function_json["search_tool"]},
+            {"type": "function", "function": function_json["scraper_tool"]}
         ],
         file_ids=[uploaded_file.id],
     )

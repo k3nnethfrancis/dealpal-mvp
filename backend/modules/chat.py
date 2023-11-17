@@ -3,7 +3,7 @@
 import time
 import json
 from backend.base import show_json
-from backend.modules.toolkit import sub_agent_search_tool, tool_functions, tool_jsons
+from backend.modules.toolkit import search_tool, tool_functions, tool_jsons
 
 def chat(client, thread, assistant, tools=None, debug=False):
     # If tools is None, initialize it as an empty list

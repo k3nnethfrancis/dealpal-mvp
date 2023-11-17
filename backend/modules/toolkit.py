@@ -4,7 +4,7 @@ from langchain.llms.openai import OpenAI
 import dotenv; dotenv.load_dotenv()
 # import langchain; langchain.debug=True
 
-def sub_agent_search_tool(query):
+def search_tool(query):
 
     search = get_search_client()
     llm = OpenAI(temperature=0)
@@ -23,7 +23,7 @@ def sub_agent_search_tool(query):
 
 # Define a dictionary mapping tool names to functions
 tool_functions = {
-    'search_tool': sub_agent_search_tool,
+    'search_tool': search_tool,
     # Add other tools here
 }
 

@@ -4,6 +4,7 @@ import { Navbar } from "@/components/Layout/Navbar";
 import { Message } from "@/types";
 import Head from "next/head";
 import { useEffect, useRef, useState } from "react";
+import 'tailwindcss/tailwind.css'
 
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -98,18 +99,18 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Chatbot UI</title>
+        <title>DealPal AI</title>
         <meta
           name="description"
-          content="A simple chatbot starter kit for OpenAI's chat model using Next.js, TypeScript, and Tailwind CSS."
+          content="The AI dealflow agent for the creator marketing economy."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      <div className="flex flex-col h-screen">
+  
+      <div className="flex flex-col h-screen bg-background text-primary font-retro">
         <Navbar />
-
+  
         <div className="flex-1 overflow-auto sm:px-10 pb-4 sm:pb-10">
           <div className="max-w-[800px] mx-auto mt-4 sm:mt-12">
             <input
