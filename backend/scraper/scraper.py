@@ -17,8 +17,8 @@ def get_driver():
     driver = uc.Chrome(options=options)
     return driver
 
-def run_selenium():
-    niche = "tennis"
+def run_selenium(category):
+    niche = category
     driver = get_driver()
     driver.get("https://ninjaoutreach.com/")
     time.sleep(1)
@@ -58,5 +58,3 @@ def run_selenium():
     sorted_profiles_data = sort_by_followers(profiles_data)
 
     return sorted_profiles_data
-
-
