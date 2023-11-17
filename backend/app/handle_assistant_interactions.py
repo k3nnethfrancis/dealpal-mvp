@@ -1,6 +1,6 @@
 import time
 import json
-from backend.scraper.scraper import run_selenium #do not remove!
+from backend.api_calls.api_calls import run_selenium
 
 # Function to handle assistant interaction
 async def handle_assistant_interaction(user_message: str, client, thread, assistant) -> str:

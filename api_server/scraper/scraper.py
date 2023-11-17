@@ -17,7 +17,7 @@ def get_driver():
     driver = uc.Chrome(options=options)
     return driver
 
-def run_selenium(category):
+def run_selenium_scraper(category):
     niche = category
     driver = get_driver()
     driver.get("https://ninjaoutreach.com/")
