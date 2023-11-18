@@ -6,7 +6,7 @@ from backend.base import BaseConfig
 config = BaseConfig(__name__)
 
 # Function to handle assistant interaction
-@config._async_logger
+@config._logger
 async def handle_assistant_interaction(
         user_message: str, 
         client, 

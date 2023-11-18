@@ -1,13 +1,17 @@
-from backend.modules.tool_config import get_search_client
-from langchain.agents import AgentType, Tool, initialize_agent
+from backend.base import BaseConfig
 from langchain.llms.openai import OpenAI
-import dotenv; dotenv.load_dotenv()
-# import langchain; langchain.debug=True
+from langchain.agents import AgentType, Tool, initialize_agent
+import langchain; langchain.debug=True
 
+config = BaseConfig(__name__)
+
+# @config._logger
 def run_search_tool(query):
-
-    search = get_search_client()
-    llm = OpenAI(temperature=0)
+    search = config.get_search_client()
+    llm = OpenAI(
+        openai_api_key=config.OPENAI_API_KEY,
+        temperature=0
+        )
     tools = [
         Tool(
             name="Intermediate Answer",
@@ -16,6 +20,9 @@ def run_search_tool(query):
         )
     ]
     self_ask_with_search = initialize_agent(
-        tools, llm, agent=AgentType.SELF_ASK_WITH_SEARCH, verbose=True
+        tools,
+        llm, 
+        agent=AgentType.SELF_ASK_WITH_SEARCH,
+        verbose=True
     )
     return self_ask_with_search.run(query)

@@ -31,7 +31,6 @@ assistant = None
 thread = None
 
 @app.on_event("startup")
-@client._async_logger
 async def startup_event():
     global assistant, thread
     assistant = await client.beta.assistants.retrieve(
@@ -40,7 +39,6 @@ async def startup_event():
     thread = await client.beta.threads.create()
 
 @app.post("/chat", response_model=ChatResponse)
-@client._async_logger
 async def chat_with_assistant(
     request: ChatRequest, 
     background_tasks: BackgroundTasks
@@ -54,7 +52,6 @@ async def chat_with_assistant(
         )
 
 @app.post("/upload")
-@client._async_logger
 async def upload_file(
     file: UploadFile = File(...)
     ):

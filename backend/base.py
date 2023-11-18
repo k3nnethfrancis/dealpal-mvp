@@ -53,9 +53,13 @@ class BaseConfig:
 
         if log_file is None:
             parent_dir = os.path.basename(os.path.dirname(__file__))
-            log_file = f"{parent_dir}-{os.path.basename(__file__)}.log"
+            file_name, _ = os.path.splitext(os.path.basename(__file__))  # Split the file name and the extension
+            log_file = f"{parent_dir}-{file_name}.log"  # Use just the file name for the log file name
         
-        log_file_path = os.path.join(os.path.dirname(__file__), '..', 'log', log_file)
+        log_dir = os.path.join(os.path.dirname(__file__), '..', 'log')
+        os.makedirs(log_dir, exist_ok=True)  # Create log directory if it doesn't exist
+
+        log_file_path = os.path.join(log_dir, log_file)
         f_handler = logging.FileHandler(log_file_path)
         f_handler.setLevel(logging.DEBUG)
 
@@ -71,15 +75,6 @@ class BaseConfig:
         def wrapper(*args, **kwargs):
             self.logger.info(f'Running {func.__name__} with args: {args} and kwargs: {kwargs}')
             result = func(*args, **kwargs)
-            self.logger.info(f'{func.__name__} returned: {result}')
-            return result
-        return wrapper
-
-    async def _async_logger(self, func):
-        @functools.wraps(func)
-        async def wrapper(*args, **kwargs):
-            self.logger.info(f'Running {func.__name__} with args: {args} and kwargs: {kwargs}')
-            result = await func(*args, **kwargs)
             self.logger.info(f'{func.__name__} returned: {result}')
             return result
         return wrapper

@@ -3,7 +3,7 @@ from backend.base import BaseConfig
 
 config = BaseConfig(__name__)
 
-@config._async_logger
+@config._logger
 async def handle_upload_file(file, client, assistant_id):
     # Read the file
     contents = await file.read()

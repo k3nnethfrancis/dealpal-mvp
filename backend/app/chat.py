@@ -6,7 +6,7 @@ from backend.base import BaseConfig
 
 config = BaseConfig(__name__)
 
-@config._async_logger
+@config._logger
 async def handle_chat_with_assistant(
         request: ChatRequest, 
         background_tasks: BackgroundTasks, 
