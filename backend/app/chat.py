@@ -2,7 +2,11 @@ import logging
 from fastapi import HTTPException, BackgroundTasks
 from backend.app.models import ChatRequest, ChatResponse
 from backend.app.handle_assistant_interactions import handle_assistant_interaction
+from backend.base import BaseConfig
 
+config = BaseConfig(__name__)
+
+@config._async_logger
 async def handle_chat_with_assistant(
         request: ChatRequest, 
         background_tasks: BackgroundTasks, 

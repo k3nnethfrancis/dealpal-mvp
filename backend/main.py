@@ -1,10 +1,13 @@
 
 import os
-from backend.modules.openai_config import get_openai_client
 from backend.modules.chat import chat
-from backend.base import ASSISTANT_ID, show_json
+from backend.base import BaseConfig
+from backend.modules.utils import show_json
 
-client = get_openai_client()
+config = BaseConfig(__name__)
+ASSISTANT_ID = config.ASSISTANT_ID
+
+client = config.get_openai_client()
 assistant = client.beta.assistants.retrieve(assistant_id=ASSISTANT_ID)
 thread = client.beta.threads.create()
 

@@ -1,8 +1,12 @@
 import time
 import json
-from backend.api_calls.api_calls import run_selenium, run_search
+from backend.toolkit.api_calls import run_selenium, run_search
+from backend.base import BaseConfig
+
+config = BaseConfig(__name__)
 
 # Function to handle assistant interaction
+@config._async_logger
 async def handle_assistant_interaction(
         user_message: str, 
         client, 

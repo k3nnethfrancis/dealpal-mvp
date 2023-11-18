@@ -2,8 +2,10 @@
 
 import time
 import json
-from backend.base import show_json
-from backend.modules.toolkit import search_tool, tool_functions, tool_jsons
+from backend.modules.utils import show_json
+# from backend.modules.toolkit import search_tool, tool_functions, tool_jsons
+from backend.toolkit.api_calls import run_selenium, run_search
+from backend.toolkit.function_jsons import function_jsons
 
 def chat(client, thread, assistant, tools=None, debug=False):
     # If tools is None, initialize it as an empty list
@@ -11,10 +13,10 @@ def chat(client, thread, assistant, tools=None, debug=False):
         tools = []
 
     # Create a list of tool JSONs to use in the chat
-    tool_jsons_to_use = [{"type": tool} if tool not in tool_functions else {"type": "function", "function": tool_jsons.get(tool, None)} for tool in tools]
+    tool_jsons_to_use = [{"type": tool} if tool not in function_jsons else {"type": "function", "function": tool_jsons.get(tool, None)} for tool in tools]
 
     # Create a dictionary of functions to use in the chat
-    functions = {tool: tool_functions[tool] for tool in tools if tool in tool_functions}
+    functions = {tool: function_jsons[tool] for tool in tools if tool in function_jsons}
 
     while True:
         user_message = input("You: ")

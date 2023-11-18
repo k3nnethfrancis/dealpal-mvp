@@ -1,6 +1,8 @@
 import os
 import yaml
-from backend.modules.openai_config import get_openai_client
+from backend.base import BaseConfig
+
+config = BaseConfig(__name__)
 
 def fetch_and_print_all_assistants(client):
     print("Fetching all existing assistants for verification...")
@@ -10,7 +12,7 @@ def fetch_and_print_all_assistants(client):
 
 def main():
     agents_path = r'backend/agents'
-    client = get_openai_client()
+    client = config.get_openai_client()
 
     # Check and log the existence of the agents directory
     if not os.path.exists(agents_path) or not os.path.isdir(agents_path):
@@ -72,6 +74,6 @@ def main():
     print("\nProcess completed.")
 
 if __name__ == "__main__":
-    client = get_openai_client()
+    client = config.get_openai_client()
     main()
     fetch_and_print_all_assistants(client)
