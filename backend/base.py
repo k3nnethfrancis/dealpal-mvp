@@ -2,6 +2,7 @@
 import os
 import yaml
 import dotenv
+import inspect
 import logging
 import functools
 from pydantic_settings import BaseSettings
@@ -21,7 +22,7 @@ class Settings(BaseSettings):
 class BaseConfig:
     def __init__(self, name, log_file=None):
         # Set up logger
-        self.logger = self.setup_logger(name, log_file)
+        self.logger = self.setup_logger(name)
 
         # Load API keys
         settings = Settings()
@@ -39,9 +40,9 @@ class BaseConfig:
         self.ASSISTANT_ID = ari_config.get("ID")
 
 
-    def setup_logger(self, name, log_file=None):
+    def setup_logger(self, name, log_level=logging.DEBUG):
         logger = logging.getLogger(name)
-        logger.setLevel(logging.DEBUG)
+        logger.setLevel(log_level)
 
         c_handler = logging.StreamHandler()
         c_handler.setLevel(logging.INFO)
@@ -51,12 +52,15 @@ class BaseConfig:
 
         logger.addHandler(c_handler)
 
-        if log_file is None:
-            parent_dir = os.path.basename(os.path.dirname(__file__))
-            file_name, _ = os.path.splitext(os.path.basename(__file__))  # Split the file name and the extension
-            log_file = f"{parent_dir}-{file_name}.log"  # Use just the file name for the log file name
-        
-        log_dir = os.path.join(os.path.dirname(__file__), '..', 'log')
+        # Get the name of the file where this method was called
+        current_frame = inspect.currentframe()
+        calling_frame = inspect.getouterframes(current_frame, 2)
+        calling_filename = calling_frame[1][1]
+        log_file_name = os.path.basename(calling_filename).replace('.py', '')
+
+        log_file = f"{log_file_name}.log"  # Use just the file name for the log file name
+
+        log_dir = os.path.join(os.path.dirname(__file__), '.log')
         os.makedirs(log_dir, exist_ok=True)  # Create log directory if it doesn't exist
 
         log_file_path = os.path.join(log_dir, log_file)

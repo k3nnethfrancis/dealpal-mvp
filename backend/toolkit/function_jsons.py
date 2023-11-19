@@ -1,4 +1,4 @@
-function_json = {
+function_jsons = {
     'search_tool': {
         "name": "run_search",
         "description": "Executes a web search procedure for answers to any query.",

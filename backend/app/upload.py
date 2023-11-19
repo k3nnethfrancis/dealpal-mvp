@@ -1,4 +1,4 @@
-from backend.toolkit.function_jsons import function_json
+from backend.toolkit.function_jsons import function_jsons
 from backend.base import BaseConfig
 
 config = BaseConfig(__name__)
@@ -14,13 +14,14 @@ async def handle_upload_file(file, client, assistant_id):
         purpose="assistants",
     )
     # Update the assistant
+    ### NEED TO FIX: RIGHT NOT UPLOAD IS WHAT ASSIGNS TOOLS
     assistant = await client.beta.assistants.update(
         assistant_id=assistant_id,
         tools=[
             {"type": "code_interpreter"},
-            {"type": "function", "function": function_json["search_tool"]},
-            {"type": "function", "function": function_json["scraper_tool"]}
-        ], # need to fix this tool assignment
+            {"type": "function", "function": function_jsons["search_tool"]},
+            {"type": "function", "function": function_jsons["scraper_tool"]}
+        ],
         file_ids=[uploaded_file.id],
     )
 
