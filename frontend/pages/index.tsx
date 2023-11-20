@@ -5,6 +5,7 @@ import { Message } from "@/types";
 import Head from "next/head";
 import { useEffect, useRef, useState } from "react";
 import 'tailwindcss/tailwind.css'
+import Linkify from 'react-linkify'; // Import the Linkify component
 
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -19,19 +20,19 @@ export default function Home() {
 
   const handleFileChange = async (selectedFile: File) => {
     setFile(selectedFile);
-  
+
     const formData = new FormData();
     formData.append("file", selectedFile);
-  
+
     const response = await fetch("http://localhost:8000/upload", {
       method: "POST",
       body: formData,
     });
-  
+
     if (!response.ok) {
       throw new Error(response.statusText);
     }
-  
+
     const data = await response.json();
     console.log(data);
   };
@@ -39,10 +40,10 @@ export default function Home() {
   const handleSend = async (message: Message) => {
     console.log("Sending message:", message);
     const updatedMessages = [...messages, message];
-  
+
     setMessages(updatedMessages);
     setLoading(true);
-  
+
     const response = await fetch("http://localhost:8000/chat", {
       method: "POST",
       headers: {
@@ -50,26 +51,28 @@ export default function Home() {
       },
       body: JSON.stringify({ user_message: message.content })  // Send a JSON object
     });
-  
+
     if (!response.ok) {
       setLoading(false);
       throw new Error(response.statusText);
     }
-  
+
     const data = await response.json();
-  
+
     if (!data) {
       return;
     }
-  
+
     setLoading(false);
-  
+
+    //const preprocessedText = data.bot_response.replace(/\n/g, ' ');
+
     setMessages((messages) => [
-      ...messages,
-      {
-        role: "assistant",
-        content: data.bot_response  // Use the correct field name
-      }
+     ...messages,
+     {
+      role: "assistant",
+      content: <div className="single-column"><Linkify>{data.bot_response}</Linkify></div>
+     }
     ]);
   };
 
@@ -107,10 +110,10 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-  
+
       <div className="flex flex-col h-screen bg-background text-primary font-retro">
         <Navbar />
-  
+
         <div className="flex-1 overflow-auto sm:px-10 pb-4 sm:pb-10">
           <div className="max-w-[800px] mx-auto mt-4 sm:mt-12">
             <input
