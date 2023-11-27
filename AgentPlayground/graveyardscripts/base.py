@@ -34,14 +34,14 @@ class BaseConfig:
         self.SEARCHAPI_API_KEY = settings.SEARCHAPI_API_KEY
 
         # Set up paths
-        self.AGENT_CONFIG_PATH = os.path.join(os.path.dirname(__file__), "agents")
-        self.ARI_CONFIG_PATH = os.path.join(self.AGENT_CONFIG_PATH, "ari.yaml")
+        # self.AGENT_CONFIG_PATH = os.path.join(os.path.dirname(__file__), "agents")
+        # self.ARI_CONFIG_PATH = os.path.join(self.AGENT_CONFIG_PATH, "ari.yaml")
 
         # Load Ari assistant ID from yaml config
-        with open(self.ARI_CONFIG_PATH, "r") as f:
-            ari_config = yaml.safe_load(f)
+        # with open(self.ARI_CONFIG_PATH, "r") as f:
+        #     ari_config = yaml.safe_load(f)
 
-        self.ASSISTANT_ID = ari_config.get("ID")
+        # self.ASSISTANT_ID = ari_config.get("ID")
 
 
     def setup_logger(self, name, log_level=logging.DEBUG):

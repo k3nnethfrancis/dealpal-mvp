@@ -1,19 +1,26 @@
 from backend.base import BaseConfig
 from langchain.llms.openai import OpenAI
 from langchain.agents import AgentType, Tool, initialize_agent
-import langchain; langchain.debug=True
+from langchain.agents import tool
 
 config = BaseConfig(__name__)
 
-# @config._logger
+
+# tool boilerplate
+@tool
+def get_word_length(word: str) -> int:
+    """Returns the length of a word."""
+    return len(word)
+
+@tool
 def run_search_tool(query: str) -> str:
-    '''
+    """
     Descr: Runs a research job to find answers to any query using the internet.
     Args:
         query: str
     Returns:
         answer: str
-    '''
+    """
     search = config.get_search_client()
     llm = OpenAI(
         openai_api_key=config.OPENAI_API_KEY,

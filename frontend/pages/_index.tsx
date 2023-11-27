@@ -1,12 +1,15 @@
+import React, { useEffect, useState, useRef } from 'react';
+import { w3cwebsocket as W3CWebSocket } from 'websocket';
 import { Chat } from "@/components/Chat/Chat";
 import { Footer } from "@/components/Layout/Footer";
 import { Navbar } from "@/components/Layout/Navbar";
 import { Message } from "@/types";
 import Head from "next/head";
-import { useEffect, useRef, useState } from "react";
 import 'tailwindcss/tailwind.css'
 import Linkify from 'react-linkify'; // Import the Linkify component
 import ReactDOMServer from 'react-dom/server';
+
+const client = new W3CWebSocket('ws://127.0.0.1:8000/ws');
 
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -38,51 +41,12 @@ export default function Home() {
     console.log(data);
   };
 
-  const handleSend = async (message: Message) => {
+  const handleSend = (message: Message) => {
     console.log("Sending message:", message);
     const updatedMessages = [...messages, message];
-  
     setMessages(updatedMessages);
     setLoading(true);
-  
-    const response = await fetch("http://localhost:8000/chat", {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ user_message: message.content })  // Send a JSON object
-    });
-  
-    if (!response.ok) {
-      setLoading(false);
-      throw new Error(response.statusText);
-    }
-  
-    if (response.body) {
-      const reader = response.body.getReader();
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) {
-          break;
-        }
-        const chunk = new TextDecoder("utf-8").decode(value);
-        setMessages((messages) => [
-          ...messages,
-          {
-            role: "assistant",
-            content: ReactDOMServer.renderToString(
-              <div className="single-column">
-                <Linkify>{chunk}</Linkify>
-              </div>
-            ),
-          },
-        ]);
-      }
-    } else {
-      console.error('Response body is null');
-    }
-
-    setLoading(false);
+    client.send(message.content);
   };
 
   const handleReset = () => {
@@ -93,6 +57,26 @@ export default function Home() {
       }
     ]);
   };
+
+  useEffect(() => {
+    client.onopen = () => {
+      console.log('WebSocket Client Connected');
+    };
+    client.onmessage = (message) => {
+      const data = message.data as string;
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(data, 'text/html');
+      const textContent = doc.body.textContent || '';
+      setMessages((messages) => [
+        ...messages,
+        {
+          role: "assistant",
+          content: textContent,
+        },
+      ]);
+      setLoading(false);
+    };
+  }, []);
 
   useEffect(() => {
     scrollToBottom();
