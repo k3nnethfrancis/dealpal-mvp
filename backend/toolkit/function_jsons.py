@@ -26,5 +26,22 @@ function_jsons = {
         "returns": {
             "description": "Does not return any value (None)."
             }
+    },
+    "email_sender_tool": {
+        "name": "send_email",
+        "description": "Sends an email using provided sender and receiver details, subject, and text.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "sender_email": {"type": "string"},
+                "receiver_email": {"type": "string"},
+                "subject": {"type": "string"},
+                "text": {"type": "string"}
+            },
+            "required": ["sender_email", "receiver_email", "subject", "text"]
+        },
+        "returns": {
+            "description": "Returns the response of the email sending process, including status codes and any messages."
+        }
     }
 }

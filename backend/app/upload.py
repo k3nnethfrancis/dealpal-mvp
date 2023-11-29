@@ -20,7 +20,8 @@ async def handle_upload_file(file, client, assistant_id):
         tools=[
             {"type": "code_interpreter"},
             {"type": "function", "function": function_jsons["search_tool"]},
-            {"type": "function", "function": function_jsons["scraper_tool"]}
+            {"type": "function", "function": function_jsons["scraper_tool"]},
+            {"type": "function", "function": function_jsons["email_sender_tool"]}
         ],
         file_ids=[uploaded_file.id],
     )

@@ -1,6 +1,6 @@
 import time
 import json
-from backend.toolkit.api_calls import run_selenium, run_search
+from backend.toolkit.api_calls import run_selenium, run_search, send_email ## !!DO NOT REMOVE!!
 from backend.base import BaseConfig
 
 config = BaseConfig(__name__)
@@ -40,6 +40,10 @@ async def handle_assistant_interaction(
             for tool_call in run.required_action.submit_tool_outputs.tool_calls:
                 func_name = tool_call.function.name
                 args = json.loads(tool_call.function.arguments)
+
+                print("args")
+                print(args)
+
                 response = globals().get(func_name)(**args) if globals().get(func_name) else None
                 if response is None:
                     raise ValueError(f"Function '{func_name}' not found or invalid arguments.")

@@ -25,9 +25,9 @@ class BaseConfig:
         self.logger = self.setup_logger(name)
 
         # Load API keys
-        settings = Settings()
-        self.OPENAI_API_KEY = settings.OPENAI_API_KEY
-        self.SEARCHAPI_API_KEY = settings.SEARCHAPI_API_KEY
+        #settings = Settings()
+        self.OPENAI_API_KEY = "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"#settings.OPENAI_API_KEY
+        self.SEARCHAPI_API_KEY = "zcwwahWk1DMfg4cZTY2Hmkng" #settings.SEARCHAPI_API_KEY
 
         # Set up paths
         self.AGENT_CONFIG_PATH = os.path.join(os.path.dirname(__file__), "agents")

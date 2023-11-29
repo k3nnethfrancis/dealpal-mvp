@@ -15,9 +15,10 @@
 * run chat.py with `python -m backend.chat`
 
 ## run the web app
-* run app.py with `python -m uvicorn backend.app:app --reload`
+* run app.py with `uvicorn backend.app.app:app --reload --port 9090`
 
 ## run the frontend
+* npm install next react react-dom
 * run `cd frontend`
 * run `npm run dev` in the frontend folder
 

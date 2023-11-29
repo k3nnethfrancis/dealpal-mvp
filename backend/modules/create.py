@@ -11,7 +11,7 @@ def fetch_and_print_all_assistants(client):
         print(f"Assistant Name: {assistant.name}, ID: {assistant.id}")
 
 def main():
-    agents_path = r'backend/agents'
+    agents_path = r'/Users/eb/PycharmProjects/dealpal-mvp/backend/agents'
     client = config.get_openai_client()
 
     # Check and log the existence of the agents directory

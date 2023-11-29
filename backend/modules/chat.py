@@ -3,7 +3,6 @@
 import time
 import json
 from backend.modules.utils import show_json
-from backend.toolkit.api_calls import run_selenium, run_search
 from backend.toolkit.function_jsons import function_jsons
 
 def chat(client, thread, assistant, tools=None, debug=False):
