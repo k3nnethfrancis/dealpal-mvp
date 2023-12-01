@@ -63,7 +63,7 @@ def run_selenium_scraper(category):
 
         # Click on the element
         instagram_button.click()
-        time.sleep(10)  # Wait for a second
+        time.sleep(7)  # Wait for a second
 
         # Find the input field by its placeholder
         topic_input = driver.find_element(By.CSS_SELECTOR, 'input[placeholder="Search for a topic"]')
@@ -83,7 +83,7 @@ def run_selenium_scraper(category):
         # Find and click the search button
         search_button = driver.find_element(By.CSS_SELECTOR, 'button[data-testid="search-button"]')
         search_button.click()
-        time.sleep(15)  # Wait for twenty seconds
+        time.sleep(10)  # Wait for twenty seconds
 
         # Load influencers with name, handle, and statistics
         influencers = driver.find_elements(By.CSS_SELECTOR, 'table.w-full tbody tr')
@@ -105,7 +105,7 @@ def run_selenium_scraper(category):
         sorted_profiles_data = sort_by_followers(profiles_data)
 
         print(sorted_profiles_data)
-        time.sleep(2)  # Wait for a hundred seconds
+        time.sleep(2)
         return sorted_profiles_data
     except Exception as e:
         print(e)
